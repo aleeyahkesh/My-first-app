@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-3x*#4w55phc3$*+nan1)1^prpy%$3#-6cvz3we8%fld41)6o$9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -75,13 +77,30 @@ WSGI_APPLICATION = 'emp_management.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+#postgresql://root:0cWd75aM1Y5QiF3rSLX2yMskYfeDT1Kp@dpg-crebhebgbbvc73bppg8g-a.frankfurt-postgres.render.com/emp_management
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.sqlite3',
+   #     'NAME': BASE_DIR / 'db.sqlite3',
+ #   }
+#}
+DATABASE_URL = 'postgresql://root:0cWd75aM1Y5QiF3rSLX2yMskYfeDT1Kp@dpg-crebhebgbbvc73bppg8g-a.frankfurt-postgres.render.com/emp_management'
+db_info = urlparse(DATABASE_URL)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
+        "NAME": db_info.path[1:],
+        "USER": db_info.username,
+        "PASSWORD": db_info.password,
+        "HOST": db_info.hostname,
+        "PORT": db_info.port,
+        "OPTIONS": {
+            "sslmode": "require",  
+        },
+        "CONN_MAX_AGE": 60,
     }
 }
+
 
 
 # Password validation
